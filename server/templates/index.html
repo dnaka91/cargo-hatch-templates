@@ -1,0 +1,16 @@
+{% raw -%}
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">Hello, World!</h1>
+    <p class="subtitle">
+      {% endraw -%}
+      Welcome to <strong>{{ project_name }}</strong>!
+      {%- raw %}
+    </p>
+  </div>
+</section>
+{% endblock content %}
+{%- endraw %}
