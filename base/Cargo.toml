@@ -2,12 +2,11 @@
 name = "{{ project_name }}"
 version = "0.1.0"
 authors = ["{{ git_author }}"]
-edition = "2018"
-resolver = "2"
+edition = "2021"
 license = "AGPL-3.0-only"
 
 [dependencies]
-anyhow = "1.0.44"
+anyhow = "1.0.51"
 
 [profile.release]
 lto = true

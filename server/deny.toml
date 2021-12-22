@@ -2,5 +2,10 @@
 allow = []
 allow-osi-fsf-free = "both"
 exceptions = [
-    { allow = ["AGPL-3.0"], name = "{{ project_name }}", version = "*" },
+    { allow = ["AGPL-3.0"], name = "tempserver", version = "*" },
+]
+
+[bans]
+skip = [
+    { name = "itoa", version = "=0.4.8" },
 ]

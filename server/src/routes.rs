@@ -1,10 +1,10 @@
-use axum::{handler::get, routing::BoxRoute, AddExtensionLayer, Router};
+use axum::{routing::get, AddExtensionLayer, Router};
 use tower::ServiceBuilder;
 use tower_http::{compression::CompressionLayer, trace::TraceLayer};
 
 use crate::{handlers, settings::GlobalSettings};
 
-pub fn build(settings: GlobalSettings) -> Router<BoxRoute> {
+pub fn build(settings: GlobalSettings) -> Router {
     Router::new()
         .route("/favicon-16x16.png", get(handlers::favicon_16))
         .route("/favicon-32x32.png", get(handlers::favicon_32))
@@ -16,6 +16,4 @@ pub fn build(settings: GlobalSettings) -> Router<BoxRoute> {
                 .layer(AddExtensionLayer::new(settings))
                 .into_inner(),
         )
-        .check_infallible()
-        .boxed()
 }

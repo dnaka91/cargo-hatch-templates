@@ -1,8 +1,6 @@
-use std::convert::Infallible;
-
 use askama::Template;
 use axum::{
-    body::{Bytes, Full},
+    body::{self, BoxBody, Empty},
     http::{Response, StatusCode},
     response::{self, IntoResponse},
 };
@@ -14,17 +12,14 @@ impl<T> IntoResponse for HtmlTemplate<T>
 where
     T: Template,
 {
-    type Body = Full<Bytes>;
-    type BodyError = Infallible;
-
-    fn into_response(self) -> Response<Self::Body> {
+    fn into_response(self) -> Response<BoxBody> {
         match self.0.render() {
             Ok(html) => response::Html(html).into_response(),
-            Err(e) => {
-                error!("failed rendering template: {:?}", e);
+            Err(err) => {
+                error!(?err, "failed rendering template");
                 Response::builder()
                     .status(StatusCode::INTERNAL_SERVER_ERROR)
-                    .body(Full::default())
+                    .body(body::boxed(Empty::new()))
                     .unwrap()
             }
         }
