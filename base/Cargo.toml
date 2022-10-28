@@ -6,7 +6,8 @@ edition = "2021"
 license = "AGPL-3.0-only"
 
 [dependencies]
-anyhow = "1.0.51"
+anyhow = "1.0.66"
 
 [profile.release]
 lto = true
+strip = true

@@ -2,11 +2,14 @@
 #![deny(rust_2018_idioms, clippy::all, clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
 
-use std::{env, net::SocketAddr};
+use std::{
+    env,
+    net::{Ipv4Addr, SocketAddr},
+};
 
 use anyhow::Result;
 use axum::Server;
-use tokio::signal;
+use tokio_shutdown::Shutdown;
 use tracing::{info, Level};
 use tracing_subscriber::{filter::Targets, prelude::*};
 
@@ -16,10 +19,10 @@ mod routes;
 mod settings;
 mod templates;
 
-const ADDRESS: [u8; 4] = if cfg!(debug_assertions) {
-    [127, 0, 0, 1]
+const ADDRESS: Ipv4Addr = if cfg!(debug_assertions) {
+    Ipv4Addr::LOCALHOST
 } else {
-    [0, 0, 0, 0]
+    Ipv4Addr::UNSPECIFIED
 };
 
 #[tokio::main]
@@ -36,19 +39,15 @@ async fn main() -> Result<()> {
 
     let settings = crate::settings::load()?;
     let addr = SocketAddr::from((ADDRESS, 8080));
+    let shutdown = Shutdown::new()?;
 
     let server = Server::try_bind(&addr)?
         .serve(routes::build(settings).into_make_service())
-        .with_graceful_shutdown(shutdown());
+        .with_graceful_shutdown(shutdown.handle());
 
-    info!("Listening on {}", addr);
+    info!("Listening on http://{}", addr);
 
     server.await?;
 
     Ok(())
-}
-
-async fn shutdown() {
-    signal::ctrl_c().await.ok();
-    info!("Shutting down");
 }
